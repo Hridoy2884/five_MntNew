@@ -3,52 +3,87 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\FileUpload;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static ?string $navigationLabel = 'Products';
+    protected static ?string $pluralModelLabel = 'Products';
+    protected static ?string $modelLabel = 'Product';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('category_id')
-                    ->required()
-                    ->numeric(),
+                // 🧭 Category Dropdown (Relationship)
+                Forms\Components\Select::make('category_id')
+                    ->label('Category')
+                    ->relationship('category', 'name')
+                    ->searchable()
+                    ->required(),
+
+                // 🏷️ Product Name
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn($state, $set) => $set('slug', \Str::slug($state))),
+
+                // 🔗 Slug
                 Forms\Components\TextInput::make('slug')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('images')
-                    ->columnSpanFull(),
+                    ->disabled()
+                    ->dehydrated()
+                    ->maxLength(255)
+                    ->unique(Product::class, 'slug', ignoreRecord: true),
+
+                // 🖼️ Image Upload
+            FileUpload::make('images')
+    ->label('Product Images')
+    ->image()
+    ->multiple()  // make it store as array
+    ->directory('products')
+    ->required(),
+
+
+                // 🧾 Description
                 Forms\Components\Textarea::make('description')
+                    ->rows(3)
+                    ->maxLength(1000)
                     ->columnSpanFull(),
+
+                // 💵 Price
                 Forms\Components\TextInput::make('price')
-                    ->required()
+                    ->label('Price ($)')
                     ->numeric()
-                    ->default(0.00)
+                    ->required()
                     ->prefix('$'),
+
+                // 🔘 Toggles
                 Forms\Components\Toggle::make('is_active')
-                    ->required(),
+                    ->label('Active')
+                    ->default(true),
+
                 Forms\Components\Toggle::make('is_featured')
-                    ->required(),
+                    ->label('Featured')
+                    ->default(false),
+
                 Forms\Components\Toggle::make('in_stock')
-                    ->required(),
+                    ->label('In Stock')
+                    ->default(true),
+
                 Forms\Components\Toggle::make('on_sale')
-                    ->required(),
+                    ->label('On Sale')
+                    ->default(false),
             ]);
     }
 
@@ -56,51 +91,49 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('category_id')
-                    ->numeric()
-                    ->sortable(),
+                // 📂 Show Category Name Instead of ID
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label('Category')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Image')
+                    ->circular(),
+
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->searchable()
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('price')
+                    ->money('usd')
+                    ->sortable(),
+
                 Tables\Columns\IconColumn::make('is_active')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('is_featured')
-                    ->boolean(),
+                    ->boolean()
+                    ->label('Active'),
+
                 Tables\Columns\IconColumn::make('in_stock')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('on_sale')
-                    ->boolean(),
+                    ->boolean()
+                    ->label('Stock'),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

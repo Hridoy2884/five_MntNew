@@ -1,97 +1,95 @@
-<header class="sticky top-0 z-50 bg-white shadow-md" style="font-family: 'Inter', sans-serif;">
-    <nav class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+<div class="sticky top-0 z-50">
 
-        <!-- Brand -->
-        <a href="#" class="text-3xl font-extrabold tracking-tight text-[#f9444b]">
-            5-Minutes
-        </a>
+    <!-- 🔔 Breaking News Bar -->
+    <div id="breaking-news"
+        class="w-full bg-gradient-to-r from-pink-600 via-red-500 to-yellow-500
+                text-white text-sm sm:text-base font-medium py-2 px-4 overflow-hidden relative text-center">
+    </div>
 
-        <!-- Desktop Menu -->
-        <div class="hidden md:flex items-center gap-6">
+    <script>
+        const newsMessages = [
+            "🛒 Welcome to 5-Minutes! Fresh products, hot deals",
+            "🔥 Hot Deal: Get 20% off on selected products today!",
+            "🥗 Fresh vegetables and fruits delivered to your doorstep!"
+        ];
 
-            <a href="#" class="text-gray-800 hover:text-[#f9444b] font-medium">Home</a>
-            <a href="#" class="text-gray-800 hover:text-[#f9444b] font-medium">Products</a>
-            <a href="#" class="text-gray-800 hover:text-[#f9444b] font-medium">Offers</a>
-            <a href="#" class="text-gray-800 hover:text-[#f9444b] font-medium">Lottery</a>
+        let currentIndex = 0;
+        const newsBar = document.getElementById("breaking-news");
 
-            <!-- Search Bar -->
-            <input type="text" placeholder="Search..." 
-                class="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f9444b]">
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % newsMessages.length;
+            newsBar.textContent = newsMessages[currentIndex];
+        }, 3000);
+    </script>
 
-            <!-- Cart Icon -->
-            <a href="#" class="relative flex items-center text-gray-800 hover:text-[#f9444b]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8H19m-7-8V6a2 2 0 1 1 4 0v7" />
+    <!-- Mobile Floating Bottom Navigation -->
+    <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-lg bg-white rounded-3xl shadow-xl border border-gray-200 md:hidden z-50">
+        <div class="flex justify-between items-center px-6 py-2 relative">
+
+            <!-- Category -->
+            <a href="{{ route('category') }}" 
+               class="flex flex-col items-center text-gray-500 hover:text-[#f9444b] transition-colors duration-200 {{ request()->routeIs('category') ? 'text-[#f9444b]' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                <span class="absolute -top-2 -right-2 text-white text-xs font-bold rounded-full px-1.5 bg-[#f9444b]">0</span>
+                <span class="text-xs">Category</span>
             </a>
-        </div>
 
-        <!-- Mobile Menu Button -->
-        <button id="menu-btn" class="md:hidden text-gray-800 hover:text-[#f9444b] focus:outline-none">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
+       <!-- Realistic Cart -->
+<a href="#" 
+   class="flex flex-col items-center text-gray-500 hover:text-[#f9444b] transition-colors duration-200 relative">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24">
+        <!-- Basket -->
+        <path d="M3 3h2l1 14h14l1-8H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <!-- Handle -->
+        <path d="M16 3a2 2 0 1 1 0 4h-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <!-- Wheels -->
+        <circle cx="9" cy="21" r="1.5" fill="currentColor"/>
+        <circle cx="18" cy="21" r="1.5" fill="currentColor"/>
+    </svg>
+    <span class="text-xs">Cart</span>
+    <span class="absolute -top-1 -right-1 text-white bg-[#f9444b] text-xs rounded-full px-1">0</span>
+</a>
 
-    </nav>
 
-    <!-- Mobile Overlay -->
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+            <!-- Center Logo: Home -->
+            <a href="{{ route('home') }}" 
+               class="flex flex-col items-center -mt-8 text-gray-500 hover:text-[#f9444b] transition-all duration-200 {{ request()->routeIs('home') ? 'text-[#f9444b]' : '' }}">
+                <div class="w-20 h-20 bg-white rounded-full shadow-md flex items-center justify-center transform transition-transform duration-200 hover:scale-110 active:scale-95">
+                    <img src="{{ asset('storage/images/5-min-logo.png') }}" alt="Logo" class="h-12 w-auto object-contain">
+                </div>
+                <span class="text-xs mt-1">Home</span>
+            </a>
 
-    <!-- Mobile Slide Menu -->
-    <div id="mobile-menu"
-        class="fixed top-0 right-0 h-full w-64 bg-[#f9444b] text-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-50">
-        <div class="flex justify-between items-center p-4 border-b border-white/20">
-            <h2 class="text-xl font-bold">Menu</h2>
-            <button id="close-btn" class="text-white text-2xl">&times;</button>
-        </div>
-        <div class="flex flex-col gap-4 p-6">
-            <a href="#" class="hover:underline">Home</a>
-            <a href="#" class="hover:underline">Products</a>
-            <a href="#" class="hover:underline">Offers</a>
-            <a href="#" class="hover:underline">Lottery</a>
-
-            <!-- Mobile Search -->
-            <input type="text" placeholder="Search..." 
-                class="px-3 py-1 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#ffffff] text-black">
-
-            <!-- Mobile Cart -->
-            <a href="#" class="flex items-center gap-2 hover:underline">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8H19m-7-8V6a2 2 0 1 1 4 0v7" />
+            <!-- Products -->
+            <a href="{{ route('products') }}" 
+               class="flex flex-col items-center text-gray-500 hover:text-[#f9444b] transition-colors duration-200 {{ request()->routeIs('products') ? 'text-[#f9444b]' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6" />
                 </svg>
-                Cart (0)
+                <span class="text-xs">Products</span>
             </a>
+
+            <!-- Lottery -->
+            <a href="#" 
+               class="flex flex-col items-center text-gray-500 hover:text-[#f9444b] transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+                    <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="text-xs">Lottery</span>
+            </a>
+
+            <!-- Login -->
+            <a href="#" class="flex flex-col items-center text-gray-500 hover:text-[#f9444b] transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-9A2.25 2.25 0 002.25 5.25v13.5A2.25 2.25 0 004.5 21h9a2.25 2.25 0 002.25-2.25V15M21 12H9m0 0l3-3m-3 3l3 3" />
+                </svg>
+                <span class="text-xs">Login</span>
+            </a>
+
         </div>
     </div>
-</header>
 
-<!-- JS for Mobile Toggle -->
-<script>
-    const menuBtn = document.getElementById("menu-btn");
-    const closeBtn = document.getElementById("close-btn");
-    const mobileMenu = document.getElementById("mobile-menu");
-    const overlay = document.getElementById("overlay");
-
-    const openMenu = () => {
-        mobileMenu.classList.remove("translate-x-full");
-        mobileMenu.classList.add("translate-x-0");
-        overlay.classList.remove("hidden");
-    };
-
-    const closeMenu = () => {
-        mobileMenu.classList.add("translate-x-full");
-        mobileMenu.classList.remove("translate-x-0");
-        overlay.classList.add("hidden");
-    };
-
-    menuBtn.addEventListener("click", openMenu);
-    closeBtn.addEventListener("click", closeMenu);
-    overlay.addEventListener("click", closeMenu);
-</script>
-
-<!-- Alpine.js (optional for future dropdowns) -->
-<script src="//unpkg.com/alpinejs" defer></script>
+</div>

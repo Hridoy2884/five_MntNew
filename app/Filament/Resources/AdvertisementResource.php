@@ -12,6 +12,13 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Group; // ✅ correct component import
+
+use Filament\Tables\Actions;
+
 
 class AdvertisementResource extends Resource
 {
@@ -22,40 +29,51 @@ class AdvertisementResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\FileUpload::make('image')
+       ->schema([
+            TextInput::make('title')->label('Ad Title')->maxLength(255),
+            
+            Group::make([
+                FileUpload::make('image')
+                    ->label('Desktop Image')
                     ->image()
+                    ->directory('ads')
                     ->required(),
-                Forms\Components\TextInput::make('title')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('link')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\Toggle::make('is_active')
-                    ->required(),
-            ]);
+
+                FileUpload::make('mobile_image')
+                    ->label('Mobile Image')
+                    ->image()
+                    ->directory('ads')
+                    ->helperText('Optional – shown only on mobile'),
+            ])->columns(2),
+
+            Toggle::make('is_active')->default(true),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image'),
+                //
+                Tables\Columns\ImageColumn::make('image')
+                ->label('Image')
+                ->disk('public') // If you store in 'storage/app/public'
+                ->height(50),
+
+                 // Mobile Image
+        Tables\Columns\ImageColumn::make('mobile_image')
+            ->label('Mobile Image')
+            ->disk('public')
+            ->height(50),
+            
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('link')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                ->label('Title')
+                ->searchable()
+                ->sortable(),
+
+            Tables\Columns\IconColumn::make('is_active')
+                ->boolean()
+                ->label('Active'),
             ])
             ->filters([
                 //

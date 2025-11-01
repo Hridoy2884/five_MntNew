@@ -36,10 +36,13 @@
         </div>
 
         <!-- Image Slider -->
-        <div id="image-slider" class="w-full sm:w-3/4 md:w-full max-w-lg h-64 sm:h-80 md:h-[500px] rounded-lg flex items-center justify-center overflow-hidden relative">
-            <img id="slider-image" src="images/Snack-PNG.png" alt="Food Image"
-                 class="object-contain w-full h-full p-2 sm:p-4 transition-transform duration-700 ease-in-out" />
-        </div>
+    <div id="image-slider" class="w-full sm:w-3/4 md:w-full max-w-lg h-64 sm:h-80 md:h-[500px] rounded-lg flex items-center justify-center overflow-hidden relative">
+    <img id="slider-image" 
+         src="{{ asset('storage/images/Snack-PNG.png') }}" 
+         alt="Food Image"
+         class="object-contain w-full h-full p-2 sm:p-4 transition-transform duration-700 ease-in-out" />
+</div>
+
 
         <!-- Floating Social Icons -->
         <div class="fixed top-1/2 right-0 transform -translate-y-1/2 z-50">
@@ -55,27 +58,48 @@
         </div>
     </section>
 
-    {{-- Banner Section --}}
-    <section id="banner" class="w-full py-16 bg-gray-100">
-        <div class="max-w-7xl mx-auto px-6 md:px-16">
-            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 text-center mb-8">
-                Latest Offers & Promotions
-            </h2>
-            <div class="relative w-full overflow-hidden rounded-2xl shadow-lg">
-                <div id="banner-slider" class="flex transition-transform duration-700 ease-in-out">
-                    <div class="min-w-full"><img src="images/banner1.png" alt="Banner 1" class="w-full h-64 md:h-96 object-cover rounded-2xl"></div>
-                    <div class="min-w-full"><img src="images/banner2.png" alt="Banner 2" class="w-full h-64 md:h-96 object-cover rounded-2xl"></div>
-                    <div class="min-w-full"><img src="images/banner3.png" alt="Banner 3" class="w-full h-64 md:h-96 object-cover rounded-2xl"></div>
-                </div>
-                <button id="prevBanner" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition">
-                    <i class="fas fa-chevron-left text-gray-800"></i>
-                </button>
-                <button id="nextBanner" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition">
-                    <i class="fas fa-chevron-right text-gray-800"></i>
-                </button>
+    {{-- category section --}}
+    @livewire('category')
+    {{-- category section end --}}
+
+{{-- Banner Section --}}
+<section id="banner" class="w-full py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-6 md:px-16">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 text-center mb-8">
+            Latest Offers & Promotions
+        </h2>
+        <div class="relative w-full overflow-hidden rounded-2xl shadow-lg">
+            <div id="banner-slider" class="flex transition-transform duration-700 ease-in-out">
+                @foreach($banners as $banner)
+                    <div class="min-w-full">
+                        <picture>
+                            {{-- Mobile Image --}}
+                            @if($banner->mobile_image)
+                                <source media="(max-width: 768px)" srcset="{{ asset('storage/' . $banner->mobile_image) }}">
+                            @endif
+
+                            {{-- Desktop Image --}}
+                            <img src="{{ asset('storage/' . $banner->image) }}" 
+                                 alt="{{ $banner->title }}" 
+                                 class="w-full h-64 md:h-96 object-cover rounded-2xl">
+                        </picture>
+                    </div>
+                @endforeach
             </div>
+
+            {{-- Slider Buttons --}}
+            <button id="prevBanner" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition">
+                <i class="fas fa-chevron-left text-gray-800"></i>
+            </button>
+            <button id="nextBanner" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition">
+                <i class="fas fa-chevron-right text-gray-800"></i>
+            </button>
         </div>
-    </section>
+    </div>
+</section>
+
+
+
 
     {{-- Stay Connected Section --}}
     <section id="stay-connected" class="w-full py-20 bg-gray-50">
@@ -97,11 +121,15 @@
 <!-- Scripts -->
 <script>
     // Hero slider images
-    const images = ["images/Snack-PNG.png","images/Snack-PNG-Transparent.png","images/Snack-PNG-Free-Download.png"];
+     const images = [
+        @foreach (['Snack-PNG.png', 'Snack-PNG-Transparent.png', 'Snack-PNG-Free-Download.png'] as $img)
+            "{{ asset('storage/images/' . $img) }}",
+        @endforeach
+    ];
     let current = 0;
     const sliderImage = document.getElementById('slider-image');
     function slideImages(){current=(current+1)%images.length;sliderImage.src=images[current];}
-    setInterval(slideImages,3000);
+    setInterval(slideImages,4000);
 
     // Banner slider
     const slider = document.getElementById('banner-slider');
